@@ -16,7 +16,7 @@ namespace DiscordBot
         private DiscordSocketClient client;
         private CommandService commands;
         private IServiceProvider services;
-        
+
 
         private async Task RunBotAsync()
         {
@@ -44,15 +44,15 @@ namespace DiscordBot
                 await client.StartAsync();
                 await Task.Delay(-1);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-               Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
         private async Task ErrorLog(string error)
         {
-           // await ReplyAsync("", false, new EmbedBuilder().WithTitle(error).Build());
+            // await ReplyAsync("", false, new EmbedBuilder().WithTitle(error).Build());
         }
 
         private async Task AnnounceUserJoined(SocketGuildUser user)
@@ -65,7 +65,7 @@ namespace DiscordBot
         private Task Log(LogMessage arg)
         {
             Console.WriteLine(arg);
-            
+
             return Task.CompletedTask;
         }
 
@@ -88,13 +88,20 @@ namespace DiscordBot
 
             if (message.HasStringPrefix("!", ref argPos) || message.HasMentionPrefix(client.CurrentUser, ref argPos))
             {
-                var context = new SocketCommandContext(client, message);
-
-                var result = await commands.ExecuteAsync(context, argPos, services);
-
-                if (!result.IsSuccess)
+                try
                 {
-                    Console.WriteLine(result.ErrorReason);
+                    var context = new SocketCommandContext(client, message);
+
+                    var result = await commands.ExecuteAsync(context, argPos, services);
+
+                    if (!result.IsSuccess)
+                    {
+                        Console.WriteLine(result.ErrorReason);
+                    }
+                }
+                catch (Exception e)
+                {
+                    await Modules.Commands.ExceptionLog(e);
                 }
             }
         }

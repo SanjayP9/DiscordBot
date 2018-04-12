@@ -14,7 +14,7 @@ namespace DiscordBot.Modules
     /// !info <user_name> - Gets info for mentioned user
     /// 
     /// </summary>
-    public class Commmands : ModuleBase<SocketCommandContext>
+    public class Commands : ModuleBase<SocketCommandContext>
     {
 
 
@@ -33,6 +33,11 @@ namespace DiscordBot.Modules
             "December"};
 
 
+        public async Task ExceptionLog(Exception e)
+        {
+            await Context.Channel.SendMessageAsync("```" + e.ToString() + "```", false, null, null);
+        }
+
 
         [Command("user")]
         public async Task UserInfoCommand()
@@ -40,6 +45,12 @@ namespace DiscordBot.Modules
             await Context.Guild.DownloadUsersAsync();
 
             await UserInfoSync(Context.User);
+        }
+
+        [Command("avatar")]
+        public async Task Avatar(IUser user)
+        {
+            await Context.Channel.SendMessageAsync(user.GetAvatarUrl(), false, null, null);
         }
 
         [Command("user")]
@@ -114,6 +125,8 @@ namespace DiscordBot.Modules
             //await ReplyAsync($"{Context.User.Mention} \njoined the server on\n {Context.User.CreatedAt} \n :fire:");
 
         }
+
+        
 
         [Command("serverinfo")]
         public async Task ServerInfoCommand()
